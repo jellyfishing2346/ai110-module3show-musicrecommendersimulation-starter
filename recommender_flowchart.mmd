@@ -1,0 +1,11 @@
+```
+flowchart TD
+    A[User Preferences] --> B[Load Songs from CSV]
+    B --> C[For each Song: Score Song]
+    C --> D{Scoring Rule}
+    D -->|Genre, Mood, Features| E[Assign Score & Reasons]
+    E --> F[Collect All Song Scores]
+    F --> G[Sort Songs by Score]
+    G --> H[Top K Recommendations]
+    H --> I[Display Titles, Scores, Reasons]
+```

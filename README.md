@@ -11,23 +11,85 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
 
----
+This project simulates a basic music recommender system that matches user preferences to song features. It demonstrates how real-world platforms like Spotify or YouTube use both collaborative and content-based filtering to suggest music, but focuses on a content-based approach using song attributes and user taste profiles.
+
 
 ## How The System Works
 
-Explain your design in plain language.
 
-Some prompts to answer:
+### How The System Works
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+**Song Features Used:**
+- genre (categorical)
+- mood (categorical)
+- energy (0.0–1.0)
+- valence (0.0–1.0)
+- danceability (0.0–1.0)
+- tempo_bpm (integer)
+- acousticness (0.0–1.0)
 
-You can include a simple diagram or bullet list if helpful.
+**UserProfile Stores:**
+- favorite_genre
+- favorite_mood
+- target_energy
+- target_valence
+- target_danceability
+- target_tempo_bpm
+- target_acousticness
+
+**Scoring Rule:**
+- +2.0 points for genre match
+- +1.0 point for mood match
+- Up to +1.0 point for each numerical feature (energy, valence, danceability, tempo, acousticness), based on similarity: 
+    - $1 - |song\_feature - user\_target|$
+    - For tempo: $1 - \frac{|song\_tempo - user\_target\_tempo|}{max\_tempo\_range}$
+
+**Ranking Rule:**
+- After scoring all songs, the system sorts them by score and recommends the top K songs.
+
+**Summary:**
+The recommender evaluates each song based on how closely it matches the user's preferences, then ranks and returns the best matches. This approach demonstrates how data-driven recommendations work in practice.
+
+---
+
+## Algorithm Recipe
+
+- +2.0 points for genre match
+- +1.0 point for mood match
+- Up to +1.0 point for each numerical feature (energy, valence, danceability, tempo, acousticness), based on similarity: $1 - |song\_feature - user\_target|$
+- For tempo: $1 - \frac{|song\_tempo - user\_target\_tempo|}{max\_tempo\_range}$
+
+**Example User Profile:**
+```python
+user_profile = {
+    "favorite_genre": "pop",
+    "favorite_mood": "happy",
+    "target_energy": 0.8,
+    "target_valence": 0.8,
+    "target_danceability": 0.8,
+    "target_tempo_bpm": 120,
+    "target_acousticness": 0.2
+}
+```
+
+---
+
+## Data Flow Diagram
+
+The following Mermaid.js flowchart visualizes the recommendation process:
+
+```mermaid
+flowchart TD
+    A[User Preferences] --> B[Load Songs from CSV]
+    B --> C[For each Song: Score Song]
+    C --> D{Scoring Rule}
+    D -->|Genre, Mood, Features| E[Assign Score & Reasons]
+    E --> F[Collect All Song Scores]
+    F --> G[Sort Songs by Score]
+    G --> H[Top K Recommendations]
+    H --> I[Display Titles, Scores, Reasons]
+```
 
 ---
 
@@ -54,7 +116,12 @@ pip install -r requirements.txt
 python -m src.main
 ```
 
-### Running Tests
+
+---
+
+## Personal Reflection
+
+My biggest learning moment during this project was seeing how simple math-based rules can create recommendations that feel surprisingly relevant, even without complex AI. Using AI tools helped me brainstorm features, generate new data, and quickly test different logic, but I always needed to double-check the results and make sure the explanations made sense. I was surprised by how much changing a single weight (like energy) could shift the recommendations, and how easy it is for a system to get "stuck" recommending the same style if the dataset or logic is too narrow. If I extended this project, I would focus on adding more features, improving diversity in the results, and making the explanations even clearer for users.
 
 Run the starter tests with:
 
